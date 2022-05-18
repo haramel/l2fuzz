@@ -29,9 +29,9 @@ Reset Bluetooth...
 Performing classic bluetooth inquiry scan...
 
 	Target Bluetooth Device List
-	[No.]	[BT address]		  [Device name]		    [Device Class]	  [OUI]
-	00.	AA:BB:CC:DD:EE:FF	  DESKTOP       		  Desktop   	      Vendor A
-	01.	11:22:33:44:55:66	  Smartphone    	  	Smartphone	      Vendor B
+	[No.]	[BT address]		  [Device name]		[Device Class]	  	[OUI]
+	00.	AA:BB:CC:DD:EE:FF	  DESKTOP       	Desktop   	      	Vendor A
+	01.	11:22:33:44:55:66	  Smartphone    	Smartphone	      	Vendor B
 	Found 2 devices
 
 Choose Device : 
