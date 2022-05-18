@@ -53,7 +53,7 @@ Select a profile to fuzz :
 ```
 5. Fuzz testing start.
 
-### Break down into end to end tests
+### end test
 
 ```
 Ctrl + C
