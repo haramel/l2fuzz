@@ -68,5 +68,7 @@ The log file will be generated after the fuzz testing in L2Fuzz folder.
 L2Fuzz paper is published in Jun 27, 2022 through "The 52nd Annual IEEE/IFIP International Conference on Dependable Systems and Networks".
 
 Title : L2Fuzz: Discovering Bluetooth L2CAP Vulnerabilities Using Stateful Fuzz Testing
+
 Authors : Haram Park (Korea University), Carlos Nkuba Kayembe (Korea University), Seunghoon Woo (Korea University), Heejo Lee (Korea University)
+
 Contacts : freehr94@korea.ac.kr, https://ccs.korea.ac.kr/
