@@ -5,7 +5,7 @@ A stateful fuzzer to detect vulnerabilities in Bluetooth BR/EDR Logical Link Con
 
 ## Prerequisites
 
-L2Fuzz uses python3.6.9 and scapy 2.4.4.
+L2Fuzz uses python3.6.9 and scapy 2.4.4. Also, it uses Bluetooth Dongle.
 
 ```
 sudo apt-get install python3-pip
