@@ -69,6 +69,10 @@ L2Fuzz paper is published in Jun 27, 2022 through "The 52nd Annual IEEE/IFIP Int
 
 Title : L2Fuzz: Discovering Bluetooth L2CAP Vulnerabilities Using Stateful Fuzz Testing
 
+Paper : https://ccs.korea.ac.kr/pds/DSN22.pdf
+
+Video : https://youtu.be/lrc-mJTw1yM
+
 Authors : Haram Park (Korea University), Carlos Nkuba Kayembe (Korea University), Seunghoon Woo (Korea University), Heejo Lee (Korea University)
 
 Contacts : freehr94@korea.ac.kr, https://ccs.korea.ac.kr/
