@@ -187,7 +187,7 @@ class l2cap_state_machine(StateMachine):
 
 class garbage_value(Packet):
 	fields_desc = [
-				   LEShortField("value", randrange(0x0000, 0x10000))
+				   LEShortField("garbage", 0)
 				   ]
 
 class new_L2CAP_ConnReq(Packet):
@@ -276,6 +276,19 @@ class L2CAP_Move_Channel_Confirmation_Request(Packet):
 
 
 
+def log_pkt(pkt):
+	"""
+	get default format of each packet and update the values
+	"""
+	pkt_default = dict(pkt.default_fields, **pkt.payload.default_fields)
+	pkt_default = dict(pkt_default, **pkt.payload.payload.default_fields)
+	pkt_CmdHdr_updated = dict(pkt_default, **pkt.fields)
+	pkt_payload_updated = dict(pkt_CmdHdr_updated, **pkt.payload.fields)
+	pkt_garbage_updated = dict(pkt_payload_updated, ** pkt.payload.payload.fields)
+	
+	return pkt_garbage_updated
+
+
 def send_pkt(bt_addr, sock, pkt, cmd_code, state):
 	"""
 	Errno
@@ -293,11 +306,12 @@ def send_pkt(bt_addr, sock, pkt, cmd_code, state):
 		sock.send(pkt)
 		#print(pkt.summary)
 		pkt_info = {}
+		pkt_info["no"] = pkt_cnt
+		pkt_info["protocol"] = "L2CAP"
 		pkt_info["sended_time"] = str(datetime.now())
-		pkt_info["summary"] = str(pkt.summary)
-		pkt_info["raw"] = str(pkt)
-		pkt_info["crash"] = "no"
-		pkt_info["state"] = state
+		pkt_info["payload"] = log_pkt(pkt)
+		pkt_info["crash"] = "n"
+		pkt_info["l2cap_state"] = state
 
 	except ConnectionResetError:
 		print("[-] Crash Found - ConnectionResetError detected")
@@ -305,14 +319,14 @@ def send_pkt(bt_addr, sock, pkt, cmd_code, state):
 			print("Crash Packet :", pkt)
 			crash_cnt += 1
 			pkt_info = {}
+			pkt_info["no"] = pkt_cnt
+			pkt_info["protocol"] = "L2CAP"
 			pkt_info["sended_time"] = str(datetime.now())
 			pkt_info["cmd"] = L2CAP_CmdDict.get(cmd_code,'reserved for future use')
-			pkt_info["cmd_code"] = cmd_code
-			pkt_info["raw"] = str(pkt)
-			pkt_info["summary"] = str(pkt.summary)
-			pkt_info["state"] = state
-			pkt_info["sended?"] = "no"			
-			pkt_info["crash"] = "yes"
+			pkt_info["payload"] = log_pkt(pkt)
+			pkt_info["l2cap_state"] = state
+			pkt_info["sended?"] = "n"			
+			pkt_info["crash"] = "y"
 			pkt_info["crash_info"] = "ConnectionResetError"
 
 	except ConnectionRefusedError:
@@ -321,14 +335,14 @@ def send_pkt(bt_addr, sock, pkt, cmd_code, state):
 			print("Crash Packet :", pkt)
 			crash_cnt += 1
 			pkt_info = {}
+			pkt_info["no"] = pkt_cnt
+			pkt_info["protocol"] = "L2CAP"
 			pkt_info["sended_time"] = str(datetime.now())
 			pkt_info["cmd"] = L2CAP_CmdDict.get(cmd_code,'reserved for future use')
-			pkt_info["cmd_code"] = cmd_code
-			pkt_info["raw"] = str(pkt)
-			pkt_info["summary"] = str(pkt.summary)
-			pkt_info["state"] = state			
-			pkt_info["sended?"] = "no"			
-			pkt_info["crash"] = "yes"
+			pkt_info["payload"] = log_pkt(pkt)
+			pkt_info["l2cap_state"] = state			
+			pkt_info["sended?"] = "n"			
+			pkt_info["crash"] = "y"
 			pkt_info["crash_info"] = "ConnectionRefusedError"
 
 	except ConnectionAbortedError:
@@ -337,14 +351,14 @@ def send_pkt(bt_addr, sock, pkt, cmd_code, state):
 			print("Crash Packet :", pkt)
 			crash_cnt += 1
 			pkt_info = {}
+			pkt_info["no"] = pkt_cnt
+			pkt_info["protocol"] = "L2CAP"
 			pkt_info["sended_time"] = str(datetime.now())
 			pkt_info["cmd"] = L2CAP_CmdDict.get(cmd_code,'reserved for future use')
-			pkt_info["cmd_code"] = cmd_code
-			pkt_info["raw"] = str(pkt)
-			pkt_info["summary"] = str(pkt.summary)
-			pkt_info["state"] = state			
-			pkt_info["sended?"] = "no"			
-			pkt_info["crash"] = "yes"
+			pkt_info["payload"] = log_pkt(pkt)
+			pkt_info["l2cap_state"] = state			
+			pkt_info["sended?"] = "n"			
+			pkt_info["crash"] = "y"
 			pkt_info["crash_info"] = "ConnectionAbortedError"		
 
 	except TimeoutError:
@@ -353,14 +367,14 @@ def send_pkt(bt_addr, sock, pkt, cmd_code, state):
 		print("Crash Packet :", pkt)
 		crash_cnt += 1
 		pkt_info = {}
+		pkt_info["no"] = pkt_cnt
+		pkt_info["protocol"] = "L2CAP"
 		pkt_info["sended_time"] = str(datetime.now())
 		pkt_info["cmd"] = L2CAP_CmdDict.get(cmd_code,'reserved for future use')
-		pkt_info["cmd_code"] = cmd_code
-		pkt_info["raw"] = str(pkt)
-		pkt_info["summary"] = str(pkt.summary)
-		pkt_info["state"] = state
-		pkt_info["sended?"] = "no"			
-		pkt_info["crash"] = "yes"
+		pkt_info["payload"] = log_pkt(pkt)
+		pkt_info["l2cap_state"] = state
+		pkt_info["sended?"] = "n"			
+		pkt_info["crash"] = "y"
 		pkt_info["crash_info"] = "TimeoutError"
 
 	except OSError as e:
@@ -373,15 +387,15 @@ def send_pkt(bt_addr, sock, pkt, cmd_code, state):
 			print("Crash Packet :", pkt)
 			crash_cnt += 1
 			pkt_info = {}
+			pkt_info["no"] = pkt_cnt
+			pkt_info["protocol"] = "L2CAP"
 			pkt_info["sended_time"] = str(datetime.now())
 			pkt_info["cmd"] = L2CAP_CmdDict.get(cmd_code,'reserved for future use')
-			pkt_info["cmd_code"] = cmd_code
-			pkt_info["raw"] = str(pkt)
-			pkt_info["summary"] = str(pkt.summary)
-			pkt_info["state"] = state
-			pkt_info["sended?"] = "no"			
-			pkt_info["crash"] = "yes"
-			pkt_info["DoS"] = "yes"
+			pkt_info["payload"] = log_pkt(pkt)
+			pkt_info["l2cap_state"] = state
+			pkt_info["sended?"] = "n"			
+			pkt_info["crash"] = "y"
+			pkt_info["DoS"] = "y"
 			pkt_info["crash_info"] = "OSError - Host is down"
 			print("[-] Crash packet causes HOST DOWN. Test finished.")
 		else:
@@ -452,7 +466,7 @@ def connection_state_fuzzing(bt_addr, sock, state_machine, packet_info):
 	for i in range(0, iteration):
 
 		cmd_code = 0x02
-		pkt = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConnReq(psm=random_psm())/garbage_value()
+		pkt = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConnReq(psm=random_psm())/garbage_value(garbage=randrange(0x0000, 0x10000))
 		sock, pkt_info = send_pkt(bt_addr, sock, pkt, cmd_code, state_machine.current_state.name) 
 		if(pkt_info == ""): pass
 		else: packet_info["packet"].append(pkt_info)
@@ -460,7 +474,7 @@ def connection_state_fuzzing(bt_addr, sock, state_machine, packet_info):
 		state_machine.closed_to_w_conn()
 
 		cmd_code = 0x03
-		pkt = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConnResp(dcid=randrange(0x0040, 0x10000), scid=randrange(0x0040, 0x10000))/garbage_value()
+		pkt = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConnResp(dcid=randrange(0x0040, 0x10000), scid=randrange(0x0040, 0x10000))/garbage_value(garbage=randrange(0x0000, 0x10000))
 		sock, pkt_info = send_pkt(bt_addr, sock, pkt, cmd_code, state_machine.current_state.name) 
 		if(pkt_info == ""): pass
 		else: packet_info["packet"].append(pkt_info)
@@ -475,7 +489,7 @@ def creation_state_fuzzing(bt_addr, sock, state_machine, packet_info):
 	for i in range(0, iteration):
 
 		cmd_code = 0x0C
-		pkt = L2CAP_CmdHdr(code=cmd_code)/L2CAP_Create_Channel_Request(psm=random_psm())/garbage_value()
+		pkt = L2CAP_CmdHdr(code=cmd_code)/L2CAP_Create_Channel_Request(psm=random_psm())/garbage_value(garbage=randrange(0x0000, 0x10000))
 
 		sock, pkt_info = send_pkt(bt_addr, sock, pkt, cmd_code, state_machine.current_state.name) 
 		if(pkt_info == ""): pass
@@ -484,7 +498,7 @@ def creation_state_fuzzing(bt_addr, sock, state_machine, packet_info):
 		state_machine.closed_to_w_create()
 
 		cmd_code = 0x0D
-		pkt = L2CAP_CmdHdr(code=cmd_code)/L2CAP_Create_Channel_Response(dcid=randrange(0x0040, 0x10000), scid=randrange(0x0040, 0x10000))/garbage_value()
+		pkt = L2CAP_CmdHdr(code=cmd_code)/L2CAP_Create_Channel_Response(dcid=randrange(0x0040, 0x10000), scid=randrange(0x0040, 0x10000))/garbage_value(garbage=randrange(0x0000, 0x10000))
 
 		sock, pkt_info = send_pkt(bt_addr, sock, pkt, cmd_code, state_machine.current_state.name) 
 		if(pkt_info == ""): pass
@@ -532,7 +546,7 @@ def configuration_state_fuzzing(bt_addr, sock, state_machine, profile, port, pac
 	for i in range(0, iteration):
 		# ConfigReq
 		cmd_code = 0x04	
-		pkt4fuzz = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConfReq(dcid=randrange(0x0040, 0x10000))/garbage_value()
+		pkt4fuzz = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConfReq(dcid=randrange(0x0040, 0x10000))/garbage_value(garbage=randrange(0x0000, 0x10000))
 
 		# logging, real sending(fuzzing in wait config state)
 		sock, pkt_info = send_pkt(bt_addr, sock, pkt4fuzz, cmd_code, state_machine.current_state.name)
@@ -556,7 +570,7 @@ def configuration_state_fuzzing(bt_addr, sock, state_machine, profile, port, pac
 	for i in range(0, iteration):
 		# ConfigReq
 		cmd_code = 0x04	
-		pkt4fuzz = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConfReq(dcid=randrange(0x0040, 0x10000))/garbage_value()
+		pkt4fuzz = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConfReq(dcid=randrange(0x0040, 0x10000))/garbage_value(garbage=randrange(0x0000, 0x10000))
 
 		# logging, real sending here (fuzzing in wait send config state)
 		sock, pkt_info = send_pkt(bt_addr, sock, pkt4fuzz, cmd_code, state_machine.current_state.name) 
@@ -570,7 +584,7 @@ def configuration_state_fuzzing(bt_addr, sock, state_machine, profile, port, pac
 	for i in range(0, iteration):
 		# ConfigResp(fail)
 		cmd_code = 0x05
-		pkt4fuzz = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConfResp(scid=randrange(0x0040, 0x10000))/garbage_value()
+		pkt4fuzz = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConfResp(scid=randrange(0x0040, 0x10000))/garbage_value(garbage=randrange(0x0000, 0x10000))
 
 		# logging, real sending here (fuzzing in wait send config state)
 		sock, pkt_info = send_pkt(bt_addr, sock, pkt4fuzz, cmd_code, state_machine.current_state.name) 
@@ -593,7 +607,7 @@ def configuration_state_fuzzing(bt_addr, sock, state_machine, profile, port, pac
 		for i in range(0, iteration):
 			# ConnReq(fail)
 			cmd_code = 0x02
-			pkt = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConnReq(psm=random_psm())/garbage_value()
+			pkt = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConnReq(psm=random_psm())/garbage_value(garbage=randrange(0x0000, 0x10000))
 	
 			# logging, real sending here
 			sock, pkt_info = send_pkt(bt_addr, sock, pkt, cmd_code, state_machine.current_state.name) 
@@ -614,7 +628,7 @@ def configuration_state_fuzzing(bt_addr, sock, state_machine, profile, port, pac
 		for i in range(0, iteration):
 			# ConfigReq
 			cmd_code = 0x04	
-			pkt4fuzz = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConfReq(dcid=randrange(0x0040, 0x10000))/garbage_value()
+			pkt4fuzz = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConfReq(dcid=randrange(0x0040, 0x10000))/garbage_value(garbage=randrange(0x0000, 0x10000))
 	
 			# logging, real sending here 
 			sock, pkt_info = send_pkt(bt_addr, sock, pkt4fuzz, cmd_code, state_machine.current_state.name) 
@@ -635,7 +649,7 @@ def configuration_state_fuzzing(bt_addr, sock, state_machine, profile, port, pac
 		for i in range(0, iteration):
 			# ConfigReq
 			cmd_code = 0x04	
-			pkt4fuzz = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConfReq(dcid=randrange(0x0040, 0x10000))/garbage_value()
+			pkt4fuzz = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConfReq(dcid=randrange(0x0040, 0x10000))/garbage_value(garbage=randrange(0x0000, 0x10000))
 	
 			# logging, real sending here 
 			sock, pkt_info = send_pkt(bt_addr, sock, pkt4fuzz, cmd_code, state_machine.current_state.name) 
@@ -656,7 +670,7 @@ def configuration_state_fuzzing(bt_addr, sock, state_machine, profile, port, pac
 		for i in range(0, iteration):
 			# ConnReq(fail)
 			cmd_code = 0x02
-			pkt = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConnReq(psm=random_psm())/garbage_value()
+			pkt = L2CAP_CmdHdr(code=cmd_code)/new_L2CAP_ConnReq(psm=random_psm())/garbage_value(garbage=randrange(0x0000, 0x10000))
 			# logging, real sending here
 			sock, pkt_info = send_pkt(bt_addr, sock, pkt, cmd_code, state_machine.current_state.name) 
 			if(pkt_info == ""): pass
@@ -697,7 +711,7 @@ def shift_state_fuzzing(bt_addr, sock, state_machine, packet_info):
 	for i in range(0, iteration):
 		# packet for moving from open state to wait move state with invalid movechanReq (with invalid dest_controller_id, 0x01(bt)-0x02(wifi) : valid id)
 		cmd_code = 0x0E
-		pkt = L2CAP_CmdHdr(code=cmd_code)/L2CAP_Move_Channel_Request(dest_controller_id=randrange(0x02,0x100))/garbage_value()
+		pkt = L2CAP_CmdHdr(code=cmd_code)/L2CAP_Move_Channel_Request(dest_controller_id=randrange(0x02,0x100))/garbage_value(garbage=randrange(0x0000, 0x10000))
 
 		# logging, real sending and state transition here 
 		sock, pkt_info = send_pkt(bt_addr, sock, pkt, cmd_code, state_machine.current_state.name) 
@@ -715,7 +729,7 @@ def shift_state_fuzzing(bt_addr, sock, state_machine, packet_info):
 	for i in range(0, iteration):
 		# packet for moving from open state to wait move confirm state with invalid move chan confirm req (with invalid icid)
 		cmd_code = 0x0E
-		pkt = L2CAP_CmdHdr(code=cmd_code)/L2CAP_Move_Channel_Confirmation_Request(icid=randrange(0x00,0x100))/garbage_value()
+		pkt = L2CAP_CmdHdr(code=cmd_code)/L2CAP_Move_Channel_Confirmation_Request(icid=randrange(0x00,0x100))/garbage_value(garbage=randrange(0x0000, 0x10000))
 
 		# logging, real sending and state transition here 
 		sock, pkt_info = send_pkt(bt_addr, sock, pkt, cmd_code, state_machine.current_state.name) 
@@ -751,7 +765,7 @@ def disconnection_state_fuzzing(bt_addr, sock, state_machine, port, packet_info)
 	for i in range(0, iteration):
 		# packet for moving from open state to wait disconnect state
 		cmd_code = 0x06
-		pkt = L2CAP_CmdHdr(code=cmd_code)/L2CAP_DisconnReq(scid=randrange(0x0040, 0x10000), dcid=randrange(0x0040, 0x10000))/garbage_value()
+		pkt = L2CAP_CmdHdr(code=cmd_code)/L2CAP_DisconnReq(scid=randrange(0x0040, 0x10000), dcid=randrange(0x0040, 0x10000))/garbage_value(garbage=randrange(0x0000, 0x10000))
 		# logging, real sending and state transition here 
 		sock, pkt_info = send_pkt(bt_addr, sock, pkt, cmd_code, state_machine.current_state.name) 
 		if(pkt_info == ""): pass
@@ -812,20 +826,15 @@ def l2cap_fuzzing(bt_addr, profile, port, test_info):
 			print("[!] Error Message :", e)
 			print("[+] Save logfile")
 			logger["end_time"] = str(datetime.now())
-			logger["total_packet"] = pkt_cnt - 1
-			logger["total_crash"] = crash_cnt
+			logger["count"] = {"all" : pkt_cnt, "crash" : crash_cnt, "passed" : pkt_cnt-crash_cnt}
 			json.dump(logger, f, indent="\t")
 
 		except KeyboardInterrupt as k:
 			print("[!] Fuzzing Stopped :", k)
 			print("[+] Save logfile")
 			logger["end_time"] = str(datetime.now())
-			logger["total_packet"] = pkt_cnt - 1
-			logger["total_crash"] = crash_cnt
+			logger["count"] = {"all" : pkt_cnt, "crash" : crash_cnt, "passed" : pkt_cnt-crash_cnt}
 			json.dump(logger, f, indent="\t")
-
-
-
 
 
 

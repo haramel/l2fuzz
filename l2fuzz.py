@@ -12,7 +12,8 @@ now = datetime.now()
 nowTime = now.strftime('%H%M%S')
 test_info = OrderedDict()
 test_info["starting_time"] = str(now)
-test_info["interface"] = "Bluetooth"
+test_info["interface"] = "Bluetooth_L2CAP"
+test_info["toolVer"] = "1.0.0"
 
 def bluetooth_reset():
     """
@@ -195,7 +196,7 @@ def bluetooth_class_of_device(device_class):
     if CoD & (1 << 13):
         services.append('Limited Discoverable Mode')
 
-    output = {'major' : major, 'minor' : minor, 'service' : services}
+    output = {"major" : major, "minor" : minor, "service" : services}
 
     return output 
 
@@ -235,7 +236,7 @@ def bluetooth_classic_scan():
             print("[-] Out of range.")
     
     addr_chosen = nearby_devices[idx][0]
-    test_info['btaddr'] = str(nearby_devices[idx][0])
+    test_info['bdaddr'] = str(nearby_devices[idx][0])
     oui = OuiLookup().query(addr_chosen)
     test_info['OUI'] = list(oui[0].values())[0]
     test_info['name'] = str(nearby_devices[idx][1])
@@ -286,9 +287,9 @@ def bluetooth_services_and_protocols_search(bt_addr):
 
 if __name__== "__main__":
     # targetting
-    bluetooth_reset()
+    #bluetooth_reset()
     target_addr = bluetooth_classic_scan()
-    target_service = bluetooth_services_and_protocols_search(target_addr)
+    target_service =  bluetooth_services_and_protocols_search(target_addr)
     target_protocol = target_service['protocol']
     target_profile = target_service['name']
     target_profile_port = target_service['port']
