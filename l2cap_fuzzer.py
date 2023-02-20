@@ -1,4 +1,4 @@
-import sys, os, subprocess
+import subprocess
 import json, datetime
 
 from statemachine import StateMachine, State
