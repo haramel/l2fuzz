@@ -1,5 +1,5 @@
 import bluetooth
-import sys, os, re
+import sys, os, re, time
 import datetime, json
 
 from scapy.all import *
@@ -261,6 +261,11 @@ def bluetooth_services_and_protocols_search(bt_addr):
     else:
         i = 0
         for serv in services:
+            # print(f"{serv=}")
+            if serv['protocol'] != 'L2CAP':
+                i += 1
+                continue
+
             if len(serv['profiles']) == 0:
                 print("\t%02d. [None]: %s" % (i, serv['name']))
             else:
@@ -294,7 +299,7 @@ if __name__== "__main__":
     target_profile = target_service['name']
     target_profile_port = target_service['port']
 
-    print("\n===================Test Informatoin===================")
+    print("\n===================Test Information===================")
     print(json.dumps(test_info, ensure_ascii=False, indent="\t"))
     print("======================================================\n")
 
