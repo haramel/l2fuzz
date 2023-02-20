@@ -802,7 +802,7 @@ def l2cap_fuzzing(bt_addr, profile, port, test_info):
 		state_machine = l2cap_state_machine()
 
 		try:
-			while(1):
+			while(True):
 				print("[+] Tested %d packets" % (pkt_cnt))	
 				# log slicing
 				if(len(logger['packet']) > 200000):
