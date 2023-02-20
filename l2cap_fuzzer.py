@@ -48,7 +48,7 @@ L2CAP_Connect_Result = {
 	0: "Connection successful",
 	1: "Connection pending",
 	2: "Connection refused - PSM not supported",
-	3: "Connection refused - seccurity block",
+	3: "Connection refused - security block",
 	4: "Connection refused - no resources available",
 	6: "Connection refused - invalid Source CID",
 	7: "Connection refused - Source CID already allocated",	
