@@ -629,7 +629,7 @@ def configuration_state_fuzzing(
     # From Connection State to Configure State (Closed State -> Wait Config State)
     while 1:
         cmd_code = 0x02
-        pkt = L2CAP_CmdHdr(code=cmd_code) / L2CAP_ConnReq(psm=port, scid=OUR_LOCAL_SCID)
+        pkt = L2CAP_CmdHdr(code=cmd_code) / new_L2CAP_ConnReq(psm=port, scid=OUR_LOCAL_SCID)
         sock, pkt_info = send_pkt(
             bt_addr, sock, pkt, cmd_code, state_machine.current_state.name
         )
@@ -782,7 +782,7 @@ def configuration_state_fuzzing(
 
         # From Wait Ind Final Rsp to Wait Final Rsp
         cmd_code = 0x02
-        pkt = L2CAP_CmdHdr(code=cmd_code) / L2CAP_ConnReq(psm=port, scid=OUR_LOCAL_SCID)
+        pkt = L2CAP_CmdHdr(code=cmd_code) / new_L2CAP_ConnReq(psm=port, scid=OUR_LOCAL_SCID)
         sock, pkt_info = send_pkt(
             bt_addr, sock, pkt, cmd_code, state_machine.current_state.name
         )
@@ -880,7 +880,7 @@ def configuration_state_fuzzing(
 
         # From Wait Control Ind to open
         cmd_code = 0x02
-        pkt = L2CAP_CmdHdr(code=cmd_code) / L2CAP_ConnReq(psm=port, scid=OUR_LOCAL_SCID)
+        pkt = L2CAP_CmdHdr(code=cmd_code) / new_L2CAP_ConnReq(psm=port, scid=OUR_LOCAL_SCID)
         sock, pkt_info = send_pkt(
             bt_addr, sock, pkt, cmd_code, state_machine.current_state.name
         )
