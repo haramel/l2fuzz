@@ -372,11 +372,11 @@ def bluetooth_services_and_protocols_search(bt_addr):
 
 if __name__ == "__main__":
     # targetting
-    if len(sys.argv) > 3:
+    if len(sys.argv) > 2:
         target_protocol = "L2CAP"
         target_addr = sys.argv[1]
-        target_profile = sys.argv[2]
-        target_profile_port = int(sys.argv[3])
+        target_profile = "L2CAP" # Doesn't matter - not used
+        target_profile_port = int(sys.argv[2])
     else:
         bluetooth_reset()
         target_addr = bluetooth_classic_scan()
