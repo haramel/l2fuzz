@@ -1,12 +1,14 @@
-import bluetooth
 import sys, os, re, time
-import datetime, json
+import json
 
+import bluetooth
 from scapy.all import *
 from OuiLookup import OuiLookup
 from collections import OrderedDict
 
 from l2cap_fuzzer import *
+
+from datetime import datetime
 
 now = datetime.now()
 nowTime = now.strftime("%H%M%S")
@@ -370,12 +372,18 @@ def bluetooth_services_and_protocols_search(bt_addr):
 
 if __name__ == "__main__":
     # targetting
-    # bluetooth_reset()
-    target_addr = bluetooth_classic_scan()
-    target_service = bluetooth_services_and_protocols_search(target_addr)
-    target_protocol = target_service["protocol"]
-    target_profile = target_service["name"]
-    target_profile_port = target_service["port"]
+    if len(sys.argv) > 3:
+        target_protocol = "L2CAP"
+        target_addr = sys.argv[1]
+        target_profile = sys.argv[2]
+        target_profile_port = int(sys.argv[3])
+    else:
+        bluetooth_reset()
+        target_addr = bluetooth_classic_scan()
+        target_service = bluetooth_services_and_protocols_search(target_addr)
+        target_protocol = target_service["protocol"]
+        target_profile = target_service["name"]
+        target_profile_port = target_service["port"]
 
     print("\n===================Test Information===================")
     print(json.dumps(test_info, ensure_ascii=False, indent="\t"))

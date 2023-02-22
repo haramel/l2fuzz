@@ -1,5 +1,7 @@
 import subprocess
-import json, datetime
+import json
+
+from datetime import datetime
 
 from statemachine import StateMachine, State
 from scapy.all import *
@@ -1063,8 +1065,8 @@ def l2cap_fuzzing(bt_addr, profile, port, test_info):
                 # Disconnection State Fuzzing (1/1)
                 disconnection_state_fuzzing(bt_addr, sock, state_machine, port, logger)
 
-        except Exception as e:
-            print("[!] Error Message :", e)
+        except Exception as exception:
+            print(f"[!] Error Message : {exception}")
             print("[+] Save logfile")
             logger["end_time"] = str(datetime.now())
             logger["count"] = {
