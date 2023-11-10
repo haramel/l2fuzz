@@ -224,7 +224,7 @@ def bluetooth_classic_scan():
             if len(nearby_devices) == 0:
                 print("[-] No bluetooth device found. Did you connect an adapter?\n")
                 # sys.exit()
-                u_inp = int(input("\nDo you want to scan again? Press 1 to scan again and any other else to exit"))
+                u_inp = int(input("\nDo you want to scan again? Press 1 to scan again and any other else to exit: "))
                 if u_inp == 1:
                     keep_scanning = True
                 else:
@@ -237,7 +237,7 @@ def bluetooth_classic_scan():
         except Exception as e:
             print(e)
             print("Check if your device has bluetooth enabled.")
-            u_inp = int(input("\nDo you want to scan again? Press 1 to scan again and any other else to exit"))
+            u_inp = int(input("\nDo you want to scan again? Press 1 to scan again and any other else to exit: "))
             if u_inp == 1:
                 keep_scanning = True
             else:
@@ -245,7 +245,7 @@ def bluetooth_classic_scan():
     
     rescan = False
     while(True):
-        u_inp = input("\nPress d to choose device, r to rescan and q to quit")
+        u_inp = input("\nPress d to choose device, r to rescan and q to quit: ")
         if u_inp == "d":
             user_input = int(input("\nChoose Device : "))
             if user_input < len(nearby_devices) and user_input > -1:
