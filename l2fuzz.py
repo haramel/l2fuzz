@@ -290,12 +290,17 @@ def bluetooth_services_and_protocols_search(bt_addr):
         return { "protocol": "None", "name": "None", "port": "None"}
     else:
         i = 0
+        j = 0
         for serv in services:
             if len(serv['profiles']) == 0:
                 print("\t%02d. [None]: %s" % (i, serv['name']))
-            else:
+            elif serv['protocol'] == "L2CAP":
                 print("\t%02d. [0x%s]: %s" % (i, serv['profiles'][0][0], serv['name']))
+            else:
+                i -= 1
             i += 1
+            j += 1
+        print(f"\n Total Profiles: {j} | Profiles that support L2CAP: {i}")
 
     while(True):
         user_input = int(input("\nSelect a profile to fuzz : "))
