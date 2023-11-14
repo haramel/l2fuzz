@@ -342,7 +342,7 @@ if __name__== "__main__":
         else:
             print("Not Supported")
 
-        u_inp = int(input("\nDo you want run again? Press 1 to run again and any other else to exit"))
+        u_inp = int(input("\nDo you want run again? Press 1 to run again and any other else to exit: "))
         if u_inp == 1:
             keep_scanning = True
         else:
