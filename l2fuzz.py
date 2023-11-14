@@ -295,6 +295,7 @@ def bluetooth_services_and_protocols_search(bt_addr):
             if len(serv['profiles']) == 0:
                 print("\t%02d. [None]: %s" % (i, serv['name']))
             elif serv['protocol'] == "L2CAP":
+                print(f"PROTOCOL: {serv['protocol']}")
                 print("\t%02d. [0x%s]: %s" % (i, serv['profiles'][0][0], serv['name']))
             else:
                 i -= 1
