@@ -205,65 +205,64 @@ def bluetooth_classic_scan():
     """
     This scan finds ONLY Bluetooth Classic (non-BLE) devices
     """
-    print('Performing classic bluetooth inquiry scan...')
 
     keep_scanning = True
+    device_selected = False
 
-    while(keep_scanning):
-        # Scan for nearby devices in regular bluetooth mode
-        try:
-            nearby_devices = bluetooth.discover_devices(duration=3, flush_cache=True, lookup_names=True, lookup_class=True)
-            i = 0
-            print("\n\tTarget Bluetooth Device List")
-            print("\t[No.]\t[BT address]\t\t[Device name]\t\t[Device Class]\t\t[OUI]")
-            for addr, name, device_class in nearby_devices:
-                device_class = bluetooth_class_of_device(hex(device_class))
-                oui = OuiLookup().query(addr)
-                print("\t%02d.\t%s\t%s\t\t%s(%s)\t%s" % (i, addr, name, device_class['major'], device_class['minor'], list(oui[0].values())[0]))                
-                i += 1
-            if len(nearby_devices) == 0:
-                print("[-] No bluetooth device found. Did you connect an adapter?\n")
-                # sys.exit()
+    while(not device_selected):
+        print('Performing classic bluetooth inquiry scan...')
+
+        while(keep_scanning):
+            # Scan for nearby devices in regular bluetooth mode
+            try:
+                nearby_devices = bluetooth.discover_devices(duration=3, flush_cache=True, lookup_names=True, lookup_class=True)
+                i = 0
+                print("\n\tTarget Bluetooth Device List")
+                print("\t[No.]\t[BT address]\t\t[Device name]\t\t[Device Class]\t\t[OUI]")
+                for addr, name, device_class in nearby_devices:
+                    device_class = bluetooth_class_of_device(hex(device_class))
+                    oui = OuiLookup().query(addr)
+                    print("\t%02d.\t%s\t%s\t\t%s(%s)\t%s" % (i, addr, name, device_class['major'], device_class['minor'], list(oui[0].values())[0]))                
+                    i += 1
+                if len(nearby_devices) == 0:
+                    print("[-] No bluetooth device found. Did you connect an adapter?\n")
+                    # sys.exit()
+                    u_inp = input("\nDo you want to scan again? Press 1 to scan again and any other else to exit: ")
+                    if u_inp == "1":
+                        keep_scanning = True
+                    else:
+                        sys.exit()
+                elif len(nearby_devices) != 0:
+                    print("\tFound %d devices" % len(nearby_devices))
+                    keep_scanning = False
+                else :
+                    sys.exit()
+            except Exception as e:
+                print(e)
+                print("Check if your device has bluetooth enabled.")
                 u_inp = input("\nDo you want to scan again? Press 1 to scan again and any other else to exit: ")
                 if u_inp == "1":
                     keep_scanning = True
                 else:
                     sys.exit()
-            elif len(nearby_devices) != 0:
-                print("\tFound %d devices" % len(nearby_devices))
-                keep_scanning = False
-            else :
-                sys.exit()
-        except Exception as e:
-            print(e)
-            print("Check if your device has bluetooth enabled.")
-            u_inp = input("\nDo you want to scan again? Press 1 to scan again and any other else to exit: ")
-            if u_inp == "1":
-                keep_scanning = True
-            else:
-                sys.exit()
     
-    rescan = False
-    while(True):
-        u_inp = input("\nPress d to choose device, r to rescan and q to quit: ")
-        if u_inp == "d":
-            user_input = int(input("\nChoose Device : "))
-            if user_input < len(nearby_devices) and user_input > -1:
-                idx = user_input
+        while(True):
+            u_inp = input("\nPress d to choose device, r to rescan and q to quit: ")
+            if u_inp == "d":
+                user_input = int(input("\nChoose Device : "))
+                if user_input < len(nearby_devices) and user_input > -1:
+                    idx = user_input
+                    device_selected = True
+                    break
+                else:
+                    print("[-] Out of range.")
+            elif u_inp == "r":
+                keep_scanning = True
                 break
+            elif u_inp == "q":
+                sys.exit()    
             else:
-                print("[-] Out of range.")
-        elif u_inp == "r":
-            rescan = True
-            break
-        else:
-            sys.exit()
-        
-    if rescan:
-        bluetooth_classic_scan()
-
-
-        
+                print("Invalid command!\n")
     
     addr_chosen = nearby_devices[idx][0]
     test_info['bdaddr'] = str(nearby_devices[idx][0])
