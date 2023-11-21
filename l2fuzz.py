@@ -205,64 +205,35 @@ def bluetooth_classic_scan():
     """
     This scan finds ONLY Bluetooth Classic (non-BLE) devices
     """
+    print('Performing classic bluetooth inquiry scan...')
 
-    keep_scanning = True
-    device_selected = False
-
-    while(not device_selected):
-        print('Performing classic bluetooth inquiry scan...')
-
-        while(keep_scanning):
-            # Scan for nearby devices in regular bluetooth mode
-            try:
-                nearby_devices = bluetooth.discover_devices(duration=3, flush_cache=True, lookup_names=True, lookup_class=True)
-                i = 0
-                print("\n\tTarget Bluetooth Device List")
-                print("\t[No.]\t[BT address]\t\t[Device name]\t\t[Device Class]\t\t[OUI]")
-                for addr, name, device_class in nearby_devices:
-                    device_class = bluetooth_class_of_device(hex(device_class))
-                    oui = OuiLookup().query(addr)
-                    print("\t%02d.\t%s\t%s\t\t%s(%s)\t%s" % (i, addr, name, device_class['major'], device_class['minor'], list(oui[0].values())[0]))                
-                    i += 1
-                if len(nearby_devices) == 0:
-                    print("[-] No bluetooth device found. Did you connect an adapter?\n")
-                    # sys.exit()
-                    u_inp = input("\nDo you want to scan again? Press 1 to scan again and any other else to exit: ")
-                    if u_inp == "1":
-                        keep_scanning = True
-                    else:
-                        sys.exit()
-                elif len(nearby_devices) != 0:
-                    print("\tFound %d devices" % len(nearby_devices))
-                    keep_scanning = False
-                else :
-                    sys.exit()
-            except Exception as e:
-                print(e)
-                print("Check if your device has bluetooth enabled.")
-                u_inp = input("\nDo you want to scan again? Press 1 to scan again and any other else to exit: ")
-                if u_inp == "1":
-                    keep_scanning = True
-                else:
-                    sys.exit()
+    while(True):
+        # Scan for nearby devices in regular bluetooth mode
+        nearby_devices = bluetooth.discover_devices(duration=3, flush_cache=True, lookup_names=True, lookup_class=True)
+        i = 0
+        print("\n\tTarget Bluetooth Device List")
+        print("\t[No.]\t[BT address]\t\t[Device name]\t\t[Device Class]\t\t[OUI]")
+        for addr, name, device_class in nearby_devices:
+            device_class = bluetooth_class_of_device(hex(device_class))
+            oui = OuiLookup().query(addr)
+            print("\t%02d.\t%s\t%s\t\t%s(%s)\t%s" % (i, addr, name, device_class['major'], device_class['minor'], list(oui[0].values())[0]))                
+            i += 1
+        if len(nearby_devices) == 0:
+            print("[-] No bluetooth device found. Did you connect an adapter?\n")
+            sys.exit()
+        elif len(nearby_devices) != 0:
+            print("\tFound %d devices" % len(nearby_devices))
+            break
+        else :
+            sys.exit()
     
-        while(True):
-            u_inp = input("\nPress d to choose device, r to rescan and q to quit: ")
-            if u_inp == "d":
-                user_input = int(input("\nChoose Device : "))
-                if user_input < len(nearby_devices) and user_input > -1:
-                    idx = user_input
-                    device_selected = True
-                    break
-                else:
-                    print("[-] Out of range.")
-            elif u_inp == "r":
-                keep_scanning = True
-                break
-            elif u_inp == "q":
-                sys.exit()    
-            else:
-                print("Invalid command!\n")
+    while(True):
+        user_input = int(input("\nChoose Device : "))
+        if user_input < len(nearby_devices) and user_input > -1:
+            idx = user_input
+            break
+        else:
+            print("[-] Out of range.")
     
     addr_chosen = nearby_devices[idx][0]
     test_info['bdaddr'] = str(nearby_devices[idx][0])
@@ -289,17 +260,12 @@ def bluetooth_services_and_protocols_search(bt_addr):
         return { "protocol": "None", "name": "None", "port": "None"}
     else:
         i = 0
-        j = 0
         for serv in services:
             if len(serv['profiles']) == 0:
                 print("\t%02d. [None]: %s" % (i, serv['name']))
-            elif serv['protocol'] == "L2CAP":
-                print("\t%02d. [0x%s]: %s" % (i, serv['profiles'][0][0], serv['name']))
             else:
-                i -= 1
+                print("\t%02d. [0x%s]: %s" % (i, serv['profiles'][0][0], serv['name']))
             i += 1
-            j += 1
-        print(f"\n Total Profiles: {j} | Profiles that support L2CAP: {i}")
 
     while(True):
         user_input = int(input("\nSelect a profile to fuzz : "))
@@ -322,33 +288,22 @@ def bluetooth_services_and_protocols_search(bt_addr):
 if __name__== "__main__":
     # targetting
     #bluetooth_reset()
-    keepScanning = True
-    while keepScanning:
-        target_addr = bluetooth_classic_scan()
-        target_service =  bluetooth_services_and_protocols_search(target_addr)
-        target_protocol = target_service['protocol']
-        target_profile = target_service['name']
-        target_profile_port = target_service['port']
+    target_addr = bluetooth_classic_scan()
+    target_service =  bluetooth_services_and_protocols_search(target_addr)
+    target_protocol = target_service['protocol']
+    target_profile = target_service['name']
+    target_profile_port = target_service['port']
 
-        print("\n===================Test Informatoin===================")
-        print(json.dumps(test_info, ensure_ascii=False, indent="\t"))
-        print("======================================================\n")
+    print("\n===================Test Informatoin===================")
+    print(json.dumps(test_info, ensure_ascii=False, indent="\t"))
+    print("======================================================\n")
 
 
-        # Protocol fuzzing
-        if(target_protocol == "L2CAP"):
-            l2cap_fuzzing(target_addr, target_profile, target_profile_port, test_info)
-        else:
-            print("Not Supported")
-
-        u_inp = input("\nDo you want run again? Press 1 to run again and any other else to exit: ")
-        if u_inp == "1":
-            keep_scanning = True
-        else:
-            sys.exit()
+    # Protocol fuzzing
+    if(target_protocol == "L2CAP"):
+        l2cap_fuzzing(target_addr, target_profile, target_profile_port, test_info)
+    else: 
+        print("Not Supported")
 
 
    
-
-
-
