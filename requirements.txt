@@ -1,0 +1,4 @@
+ouilookup==0.2.4
+PyBluez==0.23
+python-statemachine==1.0.3
+scapy==2.4.4

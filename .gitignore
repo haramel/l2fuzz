@@ -1,0 +1,12 @@
+# Project environment files.
+.DS_Store
+.env
+.idea
+.vscode
+
+# Python virtual environment.
+.venv
+venv
+
+# Compilation folder.
+__pycache__

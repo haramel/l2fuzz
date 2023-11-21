@@ -229,7 +229,7 @@ def bluetooth_classic_scan():
     
     while(True):
         user_input = int(input("\nChoose Device : "))
-        if user_input < len(nearby_devices) or user_input > -1:
+        if user_input < len(nearby_devices) and user_input > -1:
             idx = user_input
             break
         else:
@@ -307,6 +307,3 @@ if __name__== "__main__":
 
 
    
-
-
-
