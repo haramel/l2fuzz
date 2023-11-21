@@ -835,7 +835,3 @@ def l2cap_fuzzing(bt_addr, profile, port, test_info):
 			logger["end_time"] = str(datetime.now())
 			logger["count"] = {"all" : pkt_cnt, "crash" : crash_cnt, "passed" : pkt_cnt-crash_cnt}
 			json.dump(logger, f, indent="\t")
-
-
-
-
